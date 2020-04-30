@@ -5,8 +5,9 @@ const cors = require('cors')
 const helmet = require('helmet')
 
 const app = express()
+const { NODE_ENV } = require('./config')
 
-const morganOption = (process.env.NODE_ENV === 'production')
+const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
@@ -15,19 +16,20 @@ app.use(helmet())
 app.use(cors())
 
 
-app.use((err, req, res, next) => {
+app.get('/', (req, res) => {
+  throw new Error('forced error')
+  res.send("Hello, world!")
+})
+
+app.use(function errorHandling(err, req, res, next) {
   let response;
-  if (process.env.NODE_ENV === 'production')  {
+  if (NODE_ENV === 'production')  {
     response = { error: { message: 'server error' } }
   } else {
     console.error(err)
     response = { message: err.message, err }
   }
   res.status(500).json(response)
-})
-
-app.get('/', (req, res) => {
-  res.send("Hello, world!")
 })
 
 
