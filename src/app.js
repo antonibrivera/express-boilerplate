@@ -3,6 +3,8 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
+const notesRouter = require('./routers/notes-router')
+const foldersRouter = require('./routers/folders-router')
 
 const app = express()
 const { NODE_ENV } = require('./config')
@@ -16,10 +18,8 @@ app.use(helmet())
 app.use(cors())
 
 
-app.get('/', (req, res) => {
-  throw new Error('forced error')
-  res.send("Hello, world!")
-})
+app.use('/notes', notesRouter)
+app.use('/folders', foldersRouter)
 
 app.use(function errorHandling(err, req, res, next) {
   let response;
